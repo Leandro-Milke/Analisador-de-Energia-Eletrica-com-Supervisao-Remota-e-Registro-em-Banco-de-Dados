@@ -1,5 +1,5 @@
 //Analisador de energia TCC
-// Final vs 6 com determinação do fator de potencia pela potencia instantanea e correção do regstro de eventos e config rede wifi por C#
+// Final com determinação do fator de potencia pela potencia instantanea, correção do regstro de eventos e config rede wifi por C#
 
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
@@ -18,8 +18,8 @@ void CalculoRMS();
 void AtualizaLeitura();
 void Regitra_Eventos();
 void Registra_MaxMin();
-void ConfigRede();      // funçao para gravar no arquio os dados para conexão na rede
-void carregaConfigRede();  // função chamada no inicio para caregar as configuraçoes para conexao na rede.
+void ConfigRede();      // função para gravar no arquio os dados para conexão na rede
+void carregaConfigRede();  // função chamada no inicio para carregar as configuraçoes para conexao na rede.
 
 // variaveis para conexão wiifi
 char ssid[15]= ""; 
@@ -36,7 +36,7 @@ File file;
 WiFiServer server(80);
 WiFiClient client;
 
-// entradas analogicas
+// entradas analógicas
 const int tensao = 34;   // para aquisição da amostra de tensão
 const int corrente = 35; // para aquisição da amostra de corrente
 
@@ -46,16 +46,16 @@ float media_tensao [60], media_corrente [60],  media_FP[60];  // para calcular a
 float media_tensaoRMS, media_correnteRMS;                     // valoes que serão amostrados e utilizados nos calculos das outras grandezas
 float ProtecaoTensaoAlta, ProtecaoTensaoBaixa, ProtecaoCorrente, ProtecaoVAAlta, ProtecaoWAlta, Tensao_Nominal; // variaveis contendo o valor configurado para sinalizar a anormalidade
 int StatusTensao = 0; // 1 para nível adequado, 2 crítico e 3 precário 
-int ciclo = 0; // para controlar 60 ciclos para fechar 1 sesgundo a atualização das grandezas
+int ciclo = 0; // para controlar 60 ciclos para fechar 1 segundo a atualização das grandezas
 long hora = 0; // para controlar 1 hora para enviar os dados para regstro no banco de dados.
 
-// variaveis utilizadas para ver se a tensão ou corrente é zero.
+// variáveis utilizadas para ver se a tensão ou corrente cruzou pelo zero.
 int contZerosVolt = 0;
 int contZerosCor = 0;
 float anteriorTensao = 1.0;
 float anteriorCorrente = 1.0;
 
-// varaveis utilizadas para achar o valor médio, para excluir a tensão DC do circuto
+// variáveis utilizadas para achar o valor médio, para excluir a tensão DC do circuto
 double accTensao, accCorrente ;
 float medTensao, medCorrente;
 
@@ -83,7 +83,7 @@ int SincHora = 0;
 long millisAnterior;
 long tempoKwh;
 
-int i; // utilizados nos for
+int i; // utilizada nos for
 
 int flag_evento = 0; // usado no eno dos eventos de anormalidades nas função de regstro de eventos e na atualização dos medições.
 
@@ -114,7 +114,7 @@ void setup() {
     Serial.print(".");
     while(Serial.available()>0)                //se algum dado disponível
      {
-        if(Serial.read()=='C')ConfigRede();   //le o byte disponivel e se for a letra C do software de configuração, chama a rotina para configurar os parametros da rede       
+        if(Serial.read()=='C')ConfigRede();   //le o byte disponivel e se for a letra C do software de configuração, chama a rotina para configurar os parâmetros da rede       
      }   
   } 
   
@@ -134,7 +134,7 @@ void setup() {
   Kwh = 0.0;
 
   CarregaParametros();
-  millisAnterior = millis();  // para contar a hora aproximado
+  millisAnterior = millis();  // para contar a hora aproximada
   tempoKwh = millisAnterior;  // para saber o tempo exato no incremento do kwh
 
 }
@@ -166,7 +166,7 @@ void loop() {
   ciclo++;
   if (ciclo >= 60)AtualizaLeitura();
   
-  while(Serial.available()>0)                //se algum dado disponível
+  while(Serial.available()>0)                //se algum dado disponível pelo software de config da rede C#
      {
         if(Serial.read()=='C')ConfigRede();   //le o byte disponivel e se for a letra C do software de configuração, chama a rotina para configurar os parametros da rede       
      }  
@@ -174,7 +174,7 @@ void loop() {
 
 
 void CarregaParametros() { // carregar os parametros de proteção e a hora
- // Serial.println("carregando parametros");
+
   // conexão com o servidor para carregar os parâmetros de proteção
   if (client.connect(host, 8080))
   {
@@ -247,7 +247,7 @@ void aquisicao_dados() {
     delayMicroseconds(26.00);                   // tempo para fechar o periodo do ciclo.
   }
 
-  medTensao = (float)(accTensao / amostra);      // para retrar a componente DC do circuito
+  medTensao = (float)(accTensao / amostra);      // para retirar a componente DC do circuito
   medCorrente = (float)(accCorrente / amostra);
   return;
 }
@@ -305,14 +305,12 @@ void CalculoRMS() {
 
 
 void AtualizaLeitura() {
-  //Serial.println("atualizando dados");
   static int contZerosTensao = 0;
   static int contZerosCorrente = 0;
   static float media = 0;
 
   FP = 0 ;
   for (i = 0; i < 60; i++) {
-   
     if (media_tensao[i] == 0.000) contZerosTensao++;
     if (media_corrente[i] == 0.000) contZerosCorrente++;
     media_tensaoRMS +=  media_tensao[i];
@@ -320,8 +318,7 @@ void AtualizaLeitura() {
     Potencia_Ativa += Media_PotAtiva[i];
 
   }
-  
-  
+    
   if (contZerosTensao >= 5)  media_tensaoRMS = 0;
   else {
     media = media_tensaoRMS / ciclo;
@@ -333,13 +330,10 @@ void AtualizaLeitura() {
   }
 
    //_______________________ verifica se está em nível adequado, crítico e precário ___________
-    if (media_tensaoRMS >= (Tensao_Nominal * 0.92) && media_tensaoRMS <= (Tensao_Nominal * 1.05))StatusTensao = 1; // adequado
-    else if (media_tensaoRMS<(Tensao_Nominal * 0.87)|| media_tensaoRMS > (Tensao_Nominal * 1.06))StatusTensao = 3;
-    else StatusTensao = 2; // critico
-    Serial.println(StatusTensao);
-    float test = Tensao_Nominal * 0.92;
-    Serial.println(test);
-
+  if (media_tensaoRMS >= (Tensao_Nominal * 0.92) && media_tensaoRMS <= (Tensao_Nominal * 1.05))StatusTensao = 1; // adequado
+  else if (media_tensaoRMS<(Tensao_Nominal * 0.87)|| media_tensaoRMS > (Tensao_Nominal * 1.06))StatusTensao = 3;
+  else StatusTensao = 2; // critico
+    
   if (contZerosCorrente >= 5) media_correnteRMS = 0;
   else media_correnteRMS = media_correnteRMS / ciclo;
   if (media_correnteRMS < 4 ) media_correnteRMS = 0; 
@@ -351,29 +345,13 @@ void AtualizaLeitura() {
   }
   else {
     media_tensaoRMS = media_tensaoRMS * 0.98;
-    if(media_tensaoRMS < 122.5) media_tensaoRMS = media_tensaoRMS + 1.0;
-    media_correnteRMS = (media_correnteRMS * 1.013)*1.061;
-    if(media_correnteRMS > 21.00) media_correnteRMS - 1.4;
-    if(media_correnteRMS < 18.0) media_correnteRMS = (media_correnteRMS * 0.982);
-    if(media_correnteRMS > 6.0 && media_correnteRMS < 7.0) media_correnteRMS = media_correnteRMS - 0.20;
-    else if(media_correnteRMS >7.0 && media_correnteRMS < 8.0) media_correnteRMS = media_correnteRMS - 0.50;
-   // else if(media_correnteRMS < 6.0) media_correnteRMS = 0.15;
-    //media_correnteRMS = media_correnteRMS / 2;
+    media_correnteRMS = (media_correnteRMS * 1.013);
+   
     Potencia_Aparente = media_tensaoRMS * media_correnteRMS/1000;
     Potencia_Ativa = Potencia_Ativa / ciclo;
     Potencia_Ativa = Potencia_Ativa * Fc_W/1000;
-    Potencia_Ativa = Potencia_Ativa * 1.034 * 1.058;//1.035;
-    //Potencia_Ativa = Potencia_Ativa 2.0;
+    Potencia_Ativa = Potencia_Ativa * 1.034;
     FP = Potencia_Ativa / Potencia_Aparente;
-    /* teste com corrente mais aixa
-    if(media_correnteRMS < 10.0){
-    FP = FP - 0.02;
-    Potencia_Ativa = Potencia_Aparente * FP;
-    if(Potencia_Ativa > Potencia_Aparente) Potencia_Ativa = Potencia_Aparente;
-   // if(FP > 1.0){
-   //   FP = 1.0 - (FP - 1.0);
-    //  Potencia_Ativa = Potencia_Aparente * FP;
-    }*/
     if(Potencia_Ativa > Potencia_Aparente) Potencia_Ativa = Potencia_Aparente;
   }
   
@@ -382,7 +360,7 @@ void AtualizaLeitura() {
   Kwh += ((Potencia_Ativa / 3600000)*(tempAux- tempoKwh));
   tempoKwh = tempAux;
    
-// envia as medições para o seridor
+// envia as medições para o servidor quando solicitado pelo mesmo
   client = server.available();
   if (client) {                  // se tiver uma solicitação do servidor, entra na condição
     while (!client.available()) {
@@ -398,9 +376,7 @@ void AtualizaLeitura() {
     + String(Kwh) + ":" + String(StatusTensao));
 
     delay(1);
-    Serial.println("Embarcado saiu (: ");
-    Serial.println("");
-
+    
     String request = client.readStringUntil('\r');
     Serial.println(request);
     client.flush();
@@ -429,7 +405,7 @@ void AtualizaLeitura() {
   else if (Potencia_Ativa <  W_minimo)  W_minimo = Potencia_Ativa;
 
 //##################################################################################
-  // verifica se atuou alguma proteção  ProtecaoTensaoAlta, ProtecaoTensaoBaixa, ProtecaoCorrente, ProtecaoVAAlta, ProtecaoWAlta;
+  // verifica se atuou alguma proteção 
   static bool FlagTensaoAlta = false, FlagTensaoBaixa = false, FlagTensaoNormal = false, FlagCritico = false, FlagPrecario = false,  FlagNivelNormal = false,FlagSobrecorrente = false,FlagSobrecarga = false;
   if (media_tensaoRMS >= ProtecaoTensaoAlta){
       if(FlagTensaoAlta == false) Regitra_Eventos("Tensao_Alta");
@@ -588,12 +564,10 @@ void carregaConfigRede(){
   File file2 = SPIFFS.open("/test.txt");
   if (!file2 || file2.isDirectory()) {
     Serial.println("nada salvo");
-    //ConfigRede();
   }
   else{
     Serial.println("Existe!!!");
     while(file2.available()){
-    //Serial.write(file2.read());
     linha = file2.readStringUntil('\n');
     }
     linha+='\0';
@@ -739,27 +713,27 @@ void ConfigRede(){
     Serial.print('A');
     delay(1000);
     cont=0;
-    while(Serial.available()>0)                //se algum dado disponível
+    while(Serial.available()>0)               
      {
-        aux1[cont]= Serial.read();   //le o byte disponivel
+        aux1[cont]= Serial.read();   
         cont++;        
      }
      if (file1.print(aux1)) {
-     // Serial.println("rede ok");
+      Serial.println("rede ok");
       } else {
       Serial.println("File write failed");
-     }
+      }
      Serial.print('B');
      delay(1000);
      cont=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)                
      {
-        aux2[cont]= Serial.read();   //le o byte disponivel
+        aux2[cont]= Serial.read();   
         cont++;        
      }
      String Pass = ":"+(String)aux2;
      if (file1.print(Pass)) {
-        //Serial.println("password ok");
+        Serial.println("password ok");
       } else {
         Serial.println("File write failed");
       }
@@ -767,16 +741,16 @@ void ConfigRede(){
      Serial.print('C');
      delay(1000);
      ip1=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)                
      {
         ip1=ip1*10;
-        ip1+=((int)Serial.read()-48);           //le o byte disponivel        
+        ip1+=((int)Serial.read()-48);                   
      }
      delay(1000);
      Serial.print('D');
      delay(1000);
      ip2=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)                
      {
         ip2=ip2*10;
         ip2+=((int)Serial.read()-48);        
@@ -785,7 +759,7 @@ void ConfigRede(){
      Serial.print('E');
      delay(1000);
      ip3=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)               
      {
         ip3=ip3*10;
         ip3+=((int)Serial.read()-48);        
@@ -794,14 +768,14 @@ void ConfigRede(){
      Serial.print('F');
      delay(1000);
      ip4=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)                
      {
         ip4=ip4*10;
         ip4+=((int)Serial.read()-48);       
      }
      String IP = ":"+(String)ip1+":"+(String)ip2+":"+(String)ip3+":"+(String)ip4;
      if (file1.print(IP)) {
-       // Serial.println("IP ok");
+        Serial.println("IP ok");
       } else {
         Serial.println("File write failed");
       }
@@ -809,7 +783,7 @@ void ConfigRede(){
      Serial.print('G');
      delay(1000);
      ipS1=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)                
      {
         ipS1=ipS1*10;
         ipS1+=((int)Serial.read()-48);       
@@ -818,7 +792,7 @@ void ConfigRede(){
      Serial.print('H');
      delay(1000);
      ipS2=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)                
      {
         ipS2=ipS2*10;
         ipS2+=((int)Serial.read()-48);       
@@ -827,7 +801,7 @@ void ConfigRede(){
      Serial.print('I');
      delay(1000);
      ipS3=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)            
      {
         ipS3=ipS3*10;
         ipS3+=((int)Serial.read()-48);       
@@ -836,7 +810,7 @@ void ConfigRede(){
      Serial.print('J');
      delay(1000);
      ipS4=0;
-     while(Serial.available()>0)                //se algum dado disponível
+     while(Serial.available()>0)             
      {
         ipS4=ipS4*10;
         ipS4+=((int)Serial.read()-48);       
