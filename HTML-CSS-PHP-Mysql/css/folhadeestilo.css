@@ -1,0 +1,61 @@
+*{margin: 0; padding: 0;} 
+
+.conteiner-principal{font-family: 'verdana'; color: #777;}
+
+/*definir as propriedades do topo */
+header{width: 100%; height: 95px; background-color: #fff; position: relative; top: 0}
+
+.logo {position: absolute; width: 300px; height: auto;}
+.logo img{width: 90%; margin-left: 10%;}
+
+body { background-color: #AEB3D2;}
+
+/* define as propriedades do menu*/ 
+nav {position: absolute; right: 30px; bottom: 20px;}
+nav ul li {float: left; color: #f777; width: auto; margin: 0.8em; font-size: 1.5em; font-family: 'verdana'; list-style: none;}
+nav ul li a {text-decoration: none; color: #bbb;}
+nav ul li a: horver{color: #b13030}
+
+.medicoes {width: 100%; position: absolute; display: inline-block;}
+.medicoes img {width: 100%;}
+.medicoes h2 {color: #009D3D; margin-left: 5%; font-family: 'verdana'; list-style: none;}
+
+#grandezas{ 
+     width: 180px; 
+     height: 100px; 
+     margin-left: 10px;
+     display: inline-block;
+     position: relative;
+}
+
+#grandezas p {
+   text-align: center
+}
+
+
+.ImputConfirmar {
+     width: 100px;
+     height: 26px;
+     font-family: verdana;
+     background-color: #FFF;
+}
+.ImputData {
+     width: 150px;
+     height: 24px;
+     font-family: verdana;
+     background-color: #FFF;
+}
+
+.SelectGrandezas{
+
+	 width: 220px;
+     height: 26px;
+     font-family: verdana;
+     background-color: #FFF;
+}
+
+.configuracao{
+     position: relative; 
+     top: 200px;
+}
+.configuracao h2 {color: #009D3D; margin-left: 5%; font-family: 'verdana'; list-style: none;}
