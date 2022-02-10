@@ -13,7 +13,6 @@
 				ini_set('display_errors', 0);
 				//error_reporting(0);
 
-				// inclui arquivos aplicativos.
 				include 'comBD.php';
 				
 
@@ -58,7 +57,6 @@
 
 			<hr>
 			<div class="medicoes">
-				<!--<img src="imagem/unifilardes.png" alt="uni">-->
 				<br><br><br>
 				<center><h2>Medições</h2></center>
 				<br><br><br>

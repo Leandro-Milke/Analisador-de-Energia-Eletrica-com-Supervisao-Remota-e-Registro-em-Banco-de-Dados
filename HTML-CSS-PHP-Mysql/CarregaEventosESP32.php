@@ -10,9 +10,7 @@ date_default_timezone_set('America/Sao_Paulo');
 $hora = date('H:i:s');
 $data = date('Y-m-d');
 
-
-
-// como inserir dados
+// Insere no BD o evento
 $SQL = "INSERT INTO `eventos`(`Evento`, `Data`, `Hora`) VALUES ('{$evento}','{$data}','{$hora}')";
 
 if (mysqli_query($mysqli,$SQL)=== true) {
@@ -23,9 +21,6 @@ if (mysqli_query($mysqli,$SQL)=== true) {
  	echo "erro1";
  	echo mysqli_errno($mysqli);
  }
-
-
-
 
 $mysqli-> close();
 

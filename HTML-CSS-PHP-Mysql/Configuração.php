@@ -2,8 +2,10 @@
  session_start();
 // para ocultar erros na página
 ini_set('display_errors', 0);
+
 //Incluimos o código de conexão ao BD
 include 'comBD.php';
+
 $SQL = "SELECT * FROM `configuracao`";
    $dados = mysqli_query($mysqli,$SQL);
     if($dados == false){
@@ -79,7 +81,6 @@ $SQL = "SELECT * FROM `configuracao`";
 				Sobrecarga: <input type="text" name="sobrecarga" size="4" maxlength="4" value="">
 				<br><br><br><br>
   				<input type="submit" value="Salvar" onclick="Atualiza()" class="ImputConfirmar"/></center>
-  				
   				
 			</form>
 

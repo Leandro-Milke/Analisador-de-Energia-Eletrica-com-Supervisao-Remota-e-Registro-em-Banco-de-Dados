@@ -3,6 +3,7 @@
 // para ocultar erros na página
 ini_set('display_errors', 0);
 ?>
+
 <!DOCTYPE html>
 <HTML>
 <HEAD>
@@ -13,8 +14,6 @@ ini_set('display_errors', 0);
 
 </HEAD>
 <body>
-		
-
 		<div class="container-principal">
 			<header>
 				<div class="logo">

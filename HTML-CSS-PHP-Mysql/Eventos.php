@@ -2,10 +2,10 @@
  session_start();
 // para ocultar erros na página
 ini_set('display_errors', 0);
+
 //Incluimos o código de conexão ao BD
 //include 'comBD.php';
 ?>
-
 
 <!DOCTYPE html>
 <HTML>
@@ -52,8 +52,7 @@ ini_set('display_errors', 0);
   				<?php 
   					$_SESSION['data'] = $_POST['date'];
   					
-  				?>
-				
+  				?>				
 			  			
 		</div>
 		<div class="eventos">

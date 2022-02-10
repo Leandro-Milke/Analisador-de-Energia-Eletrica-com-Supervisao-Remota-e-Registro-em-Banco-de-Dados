@@ -2,7 +2,6 @@
 	 session_start();			
     // inclui arquivos para conectar ao BD.
 	include 'comBD.php';
-	//include 'Eventos.php';
 
 	$data = $_SESSION['data'];
 					
